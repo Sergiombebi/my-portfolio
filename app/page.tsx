@@ -2,13 +2,276 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  MapPin, Briefcase, Target, Globe, Mail, Phone,
+  MapPin, Briefcase, Target, Mail, Phone,
   Code, GitBranch, Link, Download, ArrowRight,
   Code2, Layers, Cpu, Wrench, GraduationCap, BookOpen,
   Rocket, BarChart3, Smartphone, ChevronDown, Menu, X,
   ExternalLink, Star, Zap, Coffee, Send, MessageCircle, Building, TreePine, DollarSign, TrendingUp, Shield,
-  Sun, Moon
+  Sun, Moon, Globe
 } from 'lucide-react';
+
+// ─── Language Context ─────────────────────────────────────────────────────
+interface LanguageContextType {
+  language: 'fr' | 'en';
+  setLanguage: (lang: 'fr' | 'en') => void;
+  t: (key: string) => string;
+}
+
+const LanguageContext = React.createContext<LanguageContextType | undefined>(undefined);
+
+function useLanguage() {
+  const context = React.useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+}
+
+// ─── Traductions ───────────────────────────────────────────────────────────
+const translations = {
+  fr: {
+    nav: {
+      home: 'Accueil',
+      about: 'À propos',
+      skills: 'Compétences',
+      education: 'Éducation',
+      projects: 'Projets',
+      contact: 'Contact'
+    },
+    hero: {
+      available: 'Disponible pour de nouveaux projets',
+      greeting: 'Salut ! Moi c\'est',
+      role: 'Développeur Frontend & Testeur',
+      description: 'passionné par la création d\'expériences web qui marient',
+      aesthetics: 'esthétique',
+      performance: 'performance',
+      quote: 'Transformer des idées en code, et du code en expériences mémorables',
+      viewProjects: 'Voir mes projets',
+      downloadCV: 'Télécharger CV',
+      contactMe: 'Me contacter'
+    },
+    about: {
+      tag: 'qui suis-je',
+      main: 'À propos ',
+      accent: 'de moi',
+      journey: 'Mon parcours',
+      passion: 'Passionné par le développement web depuis mes débuts, je me suis spécialisé dans la création d\'applications modernes qui allient',
+      performance2: 'performance',
+      experience: 'expérience utilisateur',
+      approach: 'Mon approche combine créativité technique et rigueur méthodologique pour transformer des idées complexes en solutions web élégantes et efficaces.',
+      experienceYears: 'Année d\'expérience',
+      projectsCount: 'Projets réalisés'
+    },
+    contact: {
+      tag: 'parlons ensemble',
+      main: 'Entrons en ',
+      accent: 'Contact',
+      sendMessage: 'Envoyer un message',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      email: 'Email',
+      subject: 'Sujet',
+      message: 'Décrivez votre projet...',
+      sendButton: 'Envoyer le message',
+      responseTime: 'Réponse garantie sous 24h',
+      phone: 'Téléphone',
+      location: 'Localisation',
+      city: 'Yaoundé, Cameroun'
+    },
+    skills: {
+      tag: 'ce que je maîtrise',
+      main: 'Mes ',
+      accent: 'Compétences',
+      keyInfo: 'Informations clés',
+      location: 'Localisation',
+      availability: 'Disponibilité',
+      specialization: 'Spécialisation',
+      languages: 'Langues',
+      frontend: 'Frontend',
+      backend: 'Backend',
+      tools: 'Outils & DevOps',
+      locationValue: 'Yaoundé, Cameroun',
+      availabilityValue: 'Freelance & CDI',
+      specializationValue: 'Frontend Development',
+      languagesValue: 'Français, Anglais'
+    },
+    education: {
+      tag: 'ma formation',
+      main: 'Parcours ',
+      accent: 'Éducatif',
+      bachelor: 'Baccalauréat Scientifique',
+      bachelorOrg: 'Lycée du Manengouba, Nkongsamba',
+      bachelorDesc: 'Série C — Mathématiques et Sciences Physiques',
+      license: 'Licence Professionnelle ICT4D',
+      licenseOrg: 'Université de Yaoundé 1',
+      licenseDesc: "Option Génie Logiciel — Développement d'applications et solutions numériques",
+      master: 'Master Professionnel SIGL',
+      masterOrg: 'Université de Yaoundé 1',
+      masterDesc: "Systèmes d'Information et Génie Logiciel — Architecture et développement avancé",
+      developer: 'Développeur Web Frontend',
+      developerOrg: 'Flysot Engineering',
+      developerDesc: "Développement d'applications avec Angular et intégration d'APIs REST",
+      stage6mois: 'Stage 6 mois',
+      projetsPratiques: 'Projets pratiques',
+      developpementWeb: 'Développement web',
+      angular: 'Angular',
+      apisRest: 'APIs REST',
+      frontend: 'Frontend'
+    },
+    projects: {
+      tag: 'ce que j\'ai créé',
+      main: 'Mes ',
+      accent: 'Projets',
+      viewMore: 'Voir plus',
+      viewLess: 'Voir moins',
+      projectsCount: 'projets',
+      trascolis: 'Trascolis',
+      trascolisDesc: 'Application web de suivi de colis permettant de tracer les expéditions de la Chine vers le Cameroun en temps réel.',
+      kitaboo: 'Kitaboo',
+      kitabooDesc: 'Application web de gestion immobilière permettant aux propriétaires d\'enregistrer leurs biens (hôtels, appartements, villas, duplex, voitures) et aux utilisateurs de les réserver.',
+      sigif: 'SIGIF',
+      sigifDesc: 'Application de gestion des informations forestières sur laquelle j\'ai travaillé en tant que testeur QA pour garantir la qualité et la fiabilité du système de suivi des ressources forestières.',
+      maisonier: 'Maisonier',
+      maisonierDesc: 'Application de gestion immobilière simple et efficace sur laquelle j\'ai travaillé sur le frontend Angular pour la gestion des biens et des locations.',
+      axeCapital: 'Axe Capital',
+      axeCapitalDesc: 'Application de gestion financière permettant de créer des comptes en ligne, soumettre des demandes de crédit et de financement. Développement intégral du projet.',
+      trackDepense: 'Track de Dépense',
+      trackDepenseDesc: 'Application de suivi des dépenses permettant d\'évaluer les dépenses en cours d\'un mois avec des tableaux de bord et analyses.',
+      penitentiaire: 'Application Pénitentiaire',
+      penitentiaireDesc: 'Application desktop de gestion des données des prisons. Projet non mis en production mais m\'a permis d\'acquérir d\'énormes connaissances en C# et gestion de projet.',
+      infosylve: 'Infosylve',
+      infosylveDesc: 'Application de gestion forestière française comprenant plusieurs modules (Wincbi, Wincube, Winparc, Wincoupe, Infonego) développés en Angular avec microservices backend et base de données PostgreSQL.'
+    },
+    theme: {
+      switchToLight: 'Passer en mode clair',
+      switchToDark: 'Passer en mode sombre'
+    },
+    footer: {
+      copyright: '© 2024 MBEBI MBEBI SERGIO QUENTIN — Conçu & développé avec ❤️ à Yaoundé'
+    }
+  },
+  en: {
+    nav: {
+      home: 'Home',
+      about: 'About',
+      skills: 'Skills',
+      education: 'Education',
+      projects: 'Projects',
+      contact: 'Contact'
+    },
+    hero: {
+      available: 'Available for new projects',
+      greeting: 'Hi! I\'m',
+      role: 'Frontend Developer & Tester',
+      description: 'passionate about creating web experiences that combine',
+      aesthetics: 'aesthetics',
+      performance: 'performance',
+      quote: 'Turning ideas into code, and code into memorable experiences',
+      viewProjects: 'View my projects',
+      downloadCV: 'Download CV',
+      contactMe: 'Contact me'
+    },
+    about: {
+      tag: 'who am i',
+      main: 'About ',
+      accent: 'me',
+      journey: 'My journey',
+      passion: 'Passionate about web development since my beginnings, I specialize in creating modern applications that combine',
+      performance2: 'performance',
+      experience: 'user experience',
+      approach: 'My approach combines technical creativity and methodological rigor to transform complex ideas into elegant and efficient web solutions.',
+      experienceYears: 'Year of experience',
+      projectsCount: 'Projects completed'
+    },
+    contact: {
+      tag: 'let\'s talk together',
+      main: 'Let\'s get in ',
+      accent: 'Contact',
+      sendMessage: 'Send a message',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      subject: 'Subject',
+      message: 'Describe your project...',
+      sendButton: 'Send message',
+      responseTime: 'Response guaranteed within 24h',
+      phone: 'Phone',
+      location: 'Location',
+      city: 'Yaoundé, Cameroon'
+    },
+    skills: {
+      tag: 'what i master',
+      main: 'My ',
+      accent: 'Skills',
+      keyInfo: 'Key Information',
+      location: 'Location',
+      availability: 'Availability',
+      specialization: 'Specialization',
+      languages: 'Languages',
+      frontend: 'Frontend',
+      backend: 'Backend',
+      tools: 'Tools & DevOps',
+      locationValue: 'Yaoundé, Cameroon',
+      availabilityValue: 'Freelance & Full-time',
+      specializationValue: 'Frontend Development',
+      languagesValue: 'French, English'
+    },
+    education: {
+      tag: 'my education',
+      main: 'Educational ',
+      accent: 'Journey',
+      bachelor: 'Scientific Baccalaureate',
+      bachelorOrg: 'Manengouba High School, Nkongsamba',
+      bachelorDesc: 'Series C — Mathematics and Physical Sciences',
+      license: 'Professional Bachelor ICT4D',
+      licenseOrg: 'University of Yaoundé 1',
+      licenseDesc: 'Software Engineering Option — Application and digital solution development',
+      master: 'Professional Master SIGL',
+      masterOrg: 'University of Yaoundé 1',
+      masterDesc: 'Information Systems and Software Engineering — Advanced architecture and development',
+      developer: 'Web Frontend Developer',
+      developerOrg: 'Flysot Engineering',
+      developerDesc: 'Application development with Angular and REST APIs integration',
+      stage6mois: '6-month internship',
+      projetsPratiques: 'Practical projects',
+      developpementWeb: 'Web development',
+      angular: 'Angular',
+      apisRest: 'REST APIs',
+      frontend: 'Frontend'
+    },
+    projects: {
+      tag: 'what i created',
+      main: 'My ',
+      accent: 'Projects',
+      viewMore: 'View more',
+      viewLess: 'View less',
+      projectsCount: 'projects',
+      trascolis: 'Trascolis',
+      trascolisDesc: 'Web application for package tracking allowing real-time tracing of shipments from China to Cameroon.',
+      kitaboo: 'Kitaboo',
+      kitabooDesc: 'Real estate management web application allowing property owners to register their properties (hotels, apartments, villas, duplexes, cars) and users to book them.',
+      sigif: 'SIGIF',
+      sigifDesc: 'Forest information management application on which I worked as a QA tester to ensure the quality and reliability of the forest resource tracking system.',
+      maisonier: 'Maisonier',
+      maisonierDesc: 'Simple and effective real estate management application on which I worked on the Angular frontend for property and rental management.',
+      axeCapital: 'Axe Capital',
+      axeCapitalDesc: 'Financial management application allowing online account creation, credit and financing requests submission. Full project development.',
+      trackDepense: 'Expense Tracker',
+      trackDepenseDesc: 'Expense tracking application allowing evaluation of current month expenses with dashboards and analytics.',
+      penitentiaire: 'Penitentiary Application',
+      penitentiaireDesc: 'Desktop application for prison data management. Project not put into production but allowed me to acquire enormous knowledge in C# and project management.',
+      infosylve: 'Infosylve',
+      infosylveDesc: 'French forest management application comprising several modules (Wincbi, Wincube, Winparc, Wincoupe, Infonego) developed in Angular with microservices backend and PostgreSQL database.'
+    },
+    theme: {
+      switchToLight: 'Switch to light mode',
+      switchToDark: 'Switch to dark mode'
+    },
+    footer: {
+      copyright: '© 2024 MBEBI MBEBI SERGIO QUENTIN — Designed & developed with ❤️ in Yaoundé'
+    }
+  }
+};
 
 // ─── Theme Context ───────────────────────────────────────────────────────────
 interface ThemeContextType {
@@ -25,6 +288,42 @@ function useTheme() {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
+}
+
+function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguage] = useState<'fr' | 'en'>('fr');
+
+  useEffect(() => {
+    // Load language from localStorage
+    const savedLanguage = localStorage.getItem('language') as 'fr' | 'en' | null;
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save language to localStorage
+    localStorage.setItem('language', language);
+  }, [language]);
+
+  const changeLanguage = (lang: 'fr' | 'en') => {
+    setLanguage(lang);
+  };
+
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations[language];
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return value || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage: changeLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
 }
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -54,6 +353,44 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider value={{ theme, toggleTheme, currentTheme }}>
       {children}
     </ThemeContext.Provider>
+  );
+}
+
+// ─── Language Toggle Component ───────────────────────────────────────────
+function LanguageToggle() {
+  const { language, setLanguage, t } = useLanguage();
+  
+  return (
+    <button 
+      onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+      style={{
+        width: '44px',
+        height: '44px',
+        borderRadius: '12px',
+        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255,255,255,0.05)',
+        color: 'rgba(255,255,255,0.8)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
+      title={language === 'fr' ? 'Switch to English' : 'Passer en français'}
+    >
+      <Globe size={20} />
+      <span style={{ fontSize: '10px', fontWeight: 600, marginLeft: '4px' }}>
+        {language === 'fr' ? 'FR' : 'EN'}
+      </span>
+    </button>
   );
 }
 
@@ -94,6 +431,7 @@ const themes = {
 // ─── Theme Toggle Component ───────────────────────────────────────────────────
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   
   return (
     <button 
@@ -119,7 +457,7 @@ function ThemeToggle() {
         e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
         e.currentTarget.style.transform = 'scale(1)';
       }}
-      title={`Passer en mode ${theme === 'dark' ? 'clair' : 'sombre'}`}
+      title={theme === 'dark' ? t('theme.switchToLight') : t('theme.switchToDark')}
     >
       {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
     </button>
@@ -225,11 +563,17 @@ function SectionTitle({ tag, main, accent }: { tag: string; main: string; accent
 // ─── Main ─────────────────────────────────────────────────────────────────────
 function PortfolioContent() {
   const { theme, toggleTheme, currentTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAllProjects, setShowAllProjects] = useState(false);
-  const typedName = useTypewriter(['SERGIO QUENTIN', 'FRONTEND DEV', 'TESTEUR', 'MBEBI MBEBI'], 85, 50, 2200);
+  const typedName = useTypewriter(
+    language === 'fr' 
+      ? ['SERGIO QUENTIN', 'DÉVELOPPEUR FRONTEND', 'TESTEUR', 'MBEBI MBEBI']
+      : ['SERGIO QUENTIN', 'FRONTEND DEVELOPER', 'TESTER', 'MBEBI MBEBI'], 
+    85, 50, 2200
+  );
 
   // ─── Google Fonts ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -273,17 +617,17 @@ function PortfolioContent() {
 
     // Validation simple
     if (!firstName || !lastName || !email || !subject || !message) {
-      alert('Veuillez remplir tous les champs du formulaire.');
+      alert(t('contact.validationError'));
       return;
     }
 
     // Créer le message pour l'email
-    const emailSubject = encodeURIComponent(`Nouveau message de ${firstName} ${lastName}: ${subject}`);
+    const emailSubject = encodeURIComponent(`${t('contact.emailSubject')}: ${firstName} ${lastName}: ${subject}`);
     const emailBody = encodeURIComponent(
-      `Nom: ${firstName} ${lastName}\n` +
-      `Email: ${email}\n` +
-      `Sujet: ${subject}\n\n` +
-      `Message:\n${message}`
+      `${t('contact.name')}: ${firstName} ${lastName}\n` +
+      `${t('contact.email')}: ${email}\n` +
+      `${t('contact.subject')}: ${subject}\n\n` +
+      `${t('contact.messageLabel')}:\n${message}`
     );
 
     // Ouvrir le client email par défaut
@@ -299,12 +643,12 @@ function PortfolioContent() {
   };
 
   const navItems = [
-    { id: 'hero', label: 'Accueil' },
-    { id: 'about', label: 'À propos' },
-    { id: 'skills', label: 'Compétences' },
-    { id: 'education', label: 'Éducation' },
-    { id: 'projects', label: 'Projets' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'hero', label: t('nav.home') },
+    { id: 'about', label: t('nav.about') },
+    { id: 'skills', label: t('nav.skills') },
+    { id: 'education', label: t('nav.education') },
+    { id: 'projects', label: t('nav.projects') },
+    { id: 'contact', label: t('nav.contact') },
   ];
 
   const frontendSkills = [
@@ -328,64 +672,64 @@ function PortfolioContent() {
   const projects = [
     {
       icon: <Globe size={22} />,
-      title: 'Trascolis',
-      desc: 'Application web de suivi de colis permettant de tracer les expéditions de la Chine vers le Cameroun en temps réel.',
+      title: t('projects.trascolis'),
+      desc: t('projects.trascolisDesc'),
       tags: ['Next.js', 'TypeScript', 'Supabase'],
       accent: '#f59e0b',
       bg: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.1) 100%)',
     },
     {
       icon: <Building size={22} />,
-      title: 'Kitaboo',
-      desc: 'Application web de gestion immobilière permettant aux propriétaires d\'enregistrer leurs biens (hôtels, appartements, villas, duplex, voitures) et aux utilisateurs de les réserver.',
+      title: t('projects.kitaboo'),
+      desc: t('projects.kitabooDesc'),
       tags: ['HTML', 'Tailwind CSS', 'Laravel', 'MySQL'],
       accent: '#ef4444',
       bg: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)',
     },
     {
       icon: <TreePine size={22} />,
-      title: 'SIGIF',
-      desc: 'Application de gestion des informations forestières sur laquelle j\'ai travaillé en tant que testeur QA pour garantir la qualité et la fiabilité du système de suivi des ressources forestières.',
+      title: t('projects.sigif'),
+      desc: t('projects.sigifDesc'),
       tags: ['Angular', 'Spring Boot', 'PostgreSQL', 'Testing QA'],
       accent: '#16a34a',
       bg: 'linear-gradient(135deg, rgba(22,163,74,0.2) 0%, rgba(21,128,61,0.1) 100%)',
     },
     {
       icon: <Building size={22} />,
-      title: 'Maisonier',
-      desc: 'Application de gestion immobilière simple et efficace sur laquelle j\'ai travaillé sur le frontend Angular pour la gestion des biens et des locations.',
+      title: t('projects.maisonier'),
+      desc: t('projects.maisonierDesc'),
       tags: ['Angular', 'Spring Boot', 'PostgreSQL', 'Frontend Dev'],
       accent: '#8b5cf6',
       bg: 'linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(124,58,237,0.1) 100%)',
     },
     {
       icon: <DollarSign size={22} />,
-      title: 'Axe Capital',
-      desc: 'Application de gestion financière permettant de créer des comptes en ligne, soumettre des demandes de crédit et de financement. Développement intégral du projet.',
+      title: t('projects.axeCapital'),
+      desc: t('projects.axeCapitalDesc'),
       tags: ['Vue.js', 'Laravel', 'MySQL', 'Full Stack'],
       accent: '#10b981',
       bg: 'linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%)',
     },
     {
       icon: <TrendingUp size={22} />,
-      title: 'Track de Dépense',
-      desc: 'Application de suivi des dépenses permettant d\'évaluer les dépenses en cours d\'un mois avec des tableaux de bord et analyses.',
+      title: t('projects.trackDepense'),
+      desc: t('projects.trackDepenseDesc'),
       tags: ['Next.js', 'TypeScript', 'Supabase', 'Analytics'],
       accent: '#f59e0b',
       bg: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.1) 100%)',
     },
     {
       icon: <Shield size={22} />,
-      title: 'Application Pénitentiaire',
-      desc: 'Application desktop de gestion des données des prisons. Projet non mis en production mais m\'a permis d\'acquérir d\'énormes connaissances en C# et gestion de projet.',
+      title: t('projects.penitentiaire'),
+      desc: t('projects.penitentiaireDesc'),
       tags: ['C#', '.NET', 'SQL Server', 'Desktop App'],
       accent: '#dc2626',
       bg: 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(185,28,28,0.1) 100%)',
     },
     {
       icon: <TreePine size={22} />,
-      title: 'Infosylve',
-      desc: 'Application de gestion forestière française comprenant plusieurs modules (Wincbi, Wincube, Winparc, Wincoupe, Infonego) développés en Angular avec microservices backend et base de données PostgreSQL.',
+      title: t('projects.infosylve'),
+      desc: t('projects.infosylveDesc'),
       tags: ['Angular', 'Microservices', 'PostgreSQL', 'Frontend Dev'],
       accent: '#059669',
       bg: 'linear-gradient(135deg, rgba(5,150,105,0.2) 0%, rgba(4,120,87,0.1) 100%)',
@@ -598,6 +942,14 @@ function PortfolioContent() {
             <li>
               <ThemeToggle />
             </li>
+            <li>
+              <LanguageToggle />
+            </li>
+            <li>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="nav-mobile" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', display: 'none', padding: '8px' }}>
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </li>
           </ul>
 
           {/* Mobile toggle */}
@@ -643,46 +995,46 @@ function PortfolioContent() {
           <div className="hero-text" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="hero-animate" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 18px', borderRadius: '99px', border: '1px solid rgba(167,139,250,0.3)', background: 'rgba(167,139,250,0.08)', width: 'fit-content' }}>
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', animation: 'pulse 2s infinite', boxShadow: '0 0 8px #4ade80' }} />
-              <span style={{ fontSize: '12px', color: '#a78bfa', fontFamily: "'Syne', sans-serif", fontWeight: 600, letterSpacing: '0.5px' }}>Disponible pour de nouveaux projets</span>
+              <span style={{ fontSize: '12px', color: currentTheme.accent, fontFamily: "'Syne', sans-serif", fontWeight: 600, letterSpacing: '0.5px' }}>{t('hero.available')}</span>
             </div>
 
             <div className="hero-animate">
-              <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.4)', marginBottom: '10px', fontWeight: 300 }}>Salut ! Moi c'est</p>
+              <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.4)', marginBottom: '10px', fontWeight: 300 }}>{t('hero.greeting')}</p>
               <div style={{ minHeight: '90px' }}>
                 <h1 style={{ fontSize: '3.6rem', fontWeight: 800, fontFamily: "'Syne', sans-serif", lineHeight: 1.05, letterSpacing: '-1px' }}>
                   <span style={{ background: 'linear-gradient(135deg, #c4b5fd 0%, #38bdf8 60%, #34d399 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     {typedName}
                   </span>
-                  <span style={{ display: 'inline-block', width: '3px', height: '56px', marginLeft: '4px', borderRadius: '2px', background: '#a78bfa', verticalAlign: 'middle', animation: 'blink 1s step-end infinite' }} />
+                  <span style={{ display: 'inline-block', width: '3px', height: '56px', marginLeft: '4px', borderRadius: '2px', background: currentTheme.accent, verticalAlign: 'middle', animation: 'blink 1s step-end infinite' }} />
                 </h1>
               </div>
             </div>
 
             <div className="hero-animate">
               <p style={{ fontSize: '16px', lineHeight: 1.75, color: 'rgba(255,255,255,0.6)' }}>
-                <span style={{ color: '#c4b5fd', fontWeight: 600 }}>Développeur Frontend & Testeur</span> passionné par la création d'expériences web qui marient{' '}
-                <span style={{ color: '#38bdf8' }}>esthétique</span> et <span style={{ color: '#34d399' }}>performance</span>.
+                <span style={{ color: currentTheme.accent, fontWeight: 600 }}>{t('hero.role')}</span> {t('hero.description')}{' '}
+                <span style={{ color: currentTheme.accentSecondary }}>{t('hero.aesthetics')}</span> et <span style={{ color: currentTheme.accentTertiary }}>{t('hero.performance')}</span>.
               </p>
               <p style={{ fontSize: '14px', fontStyle: 'italic', color: 'rgba(255,255,255,0.25)', marginTop: '12px' }}>
-                "Transformer des idées en code, et du code en expériences mémorables"
+                "{t('hero.quote')}"
               </p>
             </div>
 
             <div className="hero-animate hero-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <button onClick={() => scrollTo('projects')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 26px', borderRadius: '99px', fontWeight: 700, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", background: 'linear-gradient(135deg, #7c3aed, #0ea5e9)', border: 'none', color: '#fff', cursor: 'pointer', boxShadow: '0 8px 32px rgba(124,58,237,0.4)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+              <button onClick={() => scrollTo('projects')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 26px', borderRadius: '99px', fontWeight: 700, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", background: 'linear-gradient(135deg, #7c3aed, #0ea5e9)', border: 'none', color: '#fff', cursor: 'pointer', boxShadow: '0 8px 32px rgba(124,58,237,0.35)', transition: 'transform 0.2s, box-shadow 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(124,58,237,0.55)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(124,58,237,0.4)'; }}>
-                <Rocket size={15} /> Voir mes projets
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(124,58,237,0.35)'; }}>
+                <Rocket size={15} /> {t('hero.viewProjects')}
               </button>
               <a href="/cv-sergio-quentin.pdf" download style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.04)', textDecoration: 'none', transition: 'background 0.2s, transform 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.transform = 'scale(1.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'scale(1)'; }}>
-                <Download size={14} /> Télécharger CV
+                <Download size={14} /> {t('hero.downloadCV')}
               </a>
-              <button onClick={() => scrollTo('contact')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: '1px solid rgba(167,139,250,0.4)', color: '#c4b5fd', background: 'transparent', cursor: 'pointer', transition: 'background 0.2s, transform 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(167,139,250,0.1)'; e.currentTarget.style.transform = 'scale(1.04)'; }}
+              <button onClick={() => scrollTo('contact')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: `1px solid ${currentTheme.accent}66`, color: currentTheme.accent, background: 'transparent', cursor: 'pointer', transition: 'background 0.2s, transform 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = `${currentTheme.accent}15`; e.currentTarget.style.transform = 'scale(1.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}>
-                <Mail size={14} /> Me contacter
+                <Mail size={14} /> {t('hero.contactMe')}
               </button>
             </div>
 
@@ -746,22 +1098,22 @@ function PortfolioContent() {
       {/* ══ ABOUT ══ */}
       <section id="about" style={{ position: 'relative', zIndex: 10, padding: '120px 28px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <SectionTitle tag="qui suis-je" main="À propos " accent="de moi" />
-          <div className="about-grid">
+          <SectionTitle tag={t('about.tag')} main={t('about.main')} accent={t('about.accent')} />
+          <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'start' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <GlassCard>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Coffee size={18} color="#a78bfa" /> Mon parcours
+                <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: currentTheme.accent, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Coffee size={18} color={currentTheme.accent} /> {t('about.journey')}
                 </h3>
                 <p style={{ lineHeight: 1.8, color: 'rgba(255,255,255,0.65)', fontSize: '14.5px', marginBottom: '14px' }}>
-                  Passionné par le développement web depuis mes débuts, je me suis spécialisé dans la création d'applications modernes qui allient <span style={{ color: '#a78bfa', fontWeight: 600 }}>performance</span> et <span style={{ color: '#a78bfa', fontWeight: 600 }}>expérience utilisateur</span>.
+                  {t('about.passion')} <span style={{ color: currentTheme.accent, fontWeight: 600 }}>{t('about.performance2')}</span> {t('about.experience')}.
                 </p>
                 <p style={{ lineHeight: 1.8, color: 'rgba(255,255,255,0.65)', fontSize: '14.5px' }}>
-                  Mon approche combine créativité technique et rigueur méthodologique pour transformer des idées complexes en solutions web élégantes et efficaces.
+                  {t('about.approach')}
                 </p>
               </GlassCard>
-              <div className="stats-grid">
-                {[{ value: '1+', label: "Année d'expérience", color: '#a78bfa' }, { value: '10+', label: 'Projets réalisés', color: '#38bdf8' }].map(({ value, label, color }) => (
+              <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                {[{ value: '1+', label: t('about.experienceYears'), color: currentTheme.accent }, { value: '10+', label: t('about.projectsCount'), color: currentTheme.accentSecondary }].map(({ value, label, color }) => (
                   <div key={label} style={{ padding: '24px', borderRadius: '18px', textAlign: 'center', border: `1px solid ${color}22`, background: `${color}0a` }}>
                     <div style={{ fontSize: '2.2rem', fontWeight: 800, fontFamily: "'Syne', sans-serif", color, marginBottom: '6px' }}>{value}</div>
                     <div style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.4)' }}>{label}</div>
@@ -772,14 +1124,14 @@ function PortfolioContent() {
 
             <GlassCard>
               <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Star size={18} color="#a78bfa" /> Informations clés
+                <Star size={18} color="#a78bfa" /> {t('skills.keyInfo')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 {[
-                  { Icon: MapPin, label: 'Localisation', value: 'Yaoundé, Cameroun', color: '#f87171' },
-                  { Icon: Briefcase, label: 'Disponibilité', value: 'Freelance & CDI', color: '#4ade80' },
-                  { Icon: Target, label: 'Spécialisation', value: 'Frontend Development', color: '#38bdf8' },
-                  { Icon: Globe, label: 'Langues', value: 'Français, Anglais', color: '#fb923c' },
+                  { Icon: MapPin, label: t('skills.location'), value: t('skills.locationValue'), color: '#f87171' },
+                  { Icon: Briefcase, label: t('skills.availability'), value: t('skills.availabilityValue'), color: '#4ade80' },
+                  { Icon: Target, label: t('skills.specialization'), value: t('skills.specializationValue'), color: '#38bdf8' },
+                  { Icon: Globe, label: t('skills.languages'), value: t('skills.languagesValue'), color: '#fb923c' },
                 ].map(({ Icon, label, value, color }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div style={{ width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}15`, flexShrink: 0 }}>
@@ -800,14 +1152,14 @@ function PortfolioContent() {
       {/* ══ SKILLS ══ */}
       <section id="skills" style={{ position: 'relative', zIndex: 10, padding: '120px 28px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <SectionTitle tag="ce que je maîtrise" main="Mes " accent="Compétences" />
+          <SectionTitle tag={t('skills.tag')} main={t('skills.main')} accent={t('skills.accent')} />
           <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             <GlassCard>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
                 <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Layers size={20} color="#a78bfa" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#a78bfa' }}>Frontend</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#a78bfa' }}>{t('skills.frontend')}</h3>
               </div>
               {frontendSkills.map(s => <SkillBar key={s.label} {...s} />)}
             </GlassCard>
@@ -817,7 +1169,7 @@ function PortfolioContent() {
                 <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(56,189,248,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Cpu size={20} color="#38bdf8" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#38bdf8' }}>Backend</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#38bdf8' }}>{t('skills.backend')}</h3>
               </div>
               {backendSkills.map(s => <SkillBar key={s.label} {...s} />)}
             </GlassCard>
@@ -827,7 +1179,7 @@ function PortfolioContent() {
                 <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(52,211,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Wrench size={20} color="#34d399" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#34d399' }}>Outils & DevOps</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#34d399' }}>{t('skills.tools')}</h3>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {tools.map(t => <span key={t} className="skill-chip">{t}</span>)}
@@ -840,15 +1192,15 @@ function PortfolioContent() {
       {/* ══ EDUCATION ══ */}
       <section id="education" style={{ position: 'relative', zIndex: 10, padding: '120px 28px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <SectionTitle tag="ma formation" main="Parcours " accent="Éducatif" />
+          <SectionTitle tag={t('education.tag')} main={t('education.main')} accent={t('education.accent')} />
           <div style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', left: '30px', top: '24px', bottom: '24px', width: '1px', background: 'linear-gradient(to bottom, #7c3aed, rgba(124,58,237,0.1))', pointerEvents: 'none' }} />
             <div className="education-grid" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               {[
-                { Icon: BookOpen, color: '#f87171', title: 'Baccalauréat Scientifique', org: 'Lycée du Manengouba, Nkongsamba', period: '2021 – 2022', desc: 'Série C — Mathématiques et Sciences Physiques' },
-                { Icon: GraduationCap, color: '#818cf8', title: 'Licence Professionnelle ICT4D', org: 'Université de Yaoundé 1', period: '2022 – 2025', desc: "Option Génie Logiciel — Développement d'applications et solutions numériques", tags: ['Stage 6 mois', 'Projets pratiques', 'Développement web'] },
-                { Icon: Star, color: '#34d399', title: 'Master Professionnel SIGL', org: 'Université de Yaoundé 1', period: '2025 – Présent', desc: "Systèmes d'Information et Génie Logiciel — Architecture et développement avancé" },
-                { Icon: Zap, color: '#f59e0b', title: 'Développeur Web Frontend', org: 'Flysot Engineering', period: '2025 – Présent', desc: "Développement d'applications avec Angular et intégration d'APIs REST", tags: ['Angular', 'APIs REST', 'Frontend'] },
+                { Icon: BookOpen, color: '#f87171', title: t('education.bachelor'), org: t('education.bachelorOrg'), period: '2021 – 2022', desc: t('education.bachelorDesc') },
+                { Icon: GraduationCap, color: '#818cf8', title: t('education.license'), org: t('education.licenseOrg'), period: '2022 – 2025', desc: t('education.licenseDesc'), tags: [t('education.stage6mois'), t('education.projetsPratiques'), t('education.developpementWeb')] },
+                { Icon: Star, color: '#34d399', title: t('education.master'), org: t('education.masterOrg'), period: '2025 – Présent', desc: t('education.masterDesc') },
+                { Icon: Zap, color: '#f59e0b', title: t('education.developer'), org: t('education.developerOrg'), period: '2025 – Présent', desc: t('education.developerDesc'), tags: [t('education.angular'), t('education.apisRest'), t('education.frontend')] },
               ].map(({ Icon, color, title, org, period, desc, tags }) => (
                 <div key={title} className="edu-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
                   <div style={{ width: '60px', height: '60px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}18`, border: `1px solid ${color}33`, flexShrink: 0, position: 'relative', zIndex: 2 }}>
@@ -877,7 +1229,7 @@ function PortfolioContent() {
       {/* ══ PROJECTS ══ */}
       <section id="projects" style={{ position: 'relative', zIndex: 10, padding: '120px 28px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <SectionTitle tag="ce que j'ai créé" main="Mes " accent="Projets" />
+          <SectionTitle tag={t('projects.tag')} main={t('projects.main')} accent={t('projects.accent')} />
           <div className="projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {(showAllProjects ? projects : projects.slice(0, 3)).map(({ icon, title, desc, tags, accent, bg }) => (
               <div key={title} className="proj-card" style={{ background: 'rgba(255,255,255,0.025)' }}>
@@ -952,12 +1304,12 @@ function PortfolioContent() {
                 {showAllProjects ? (
                   <>
                     <ChevronDown size={18} style={{ transform: 'rotate(180deg)' }} />
-                    Voir moins
+                    {t('projects.viewLess')}
                   </>
                 ) : (
                   <>
                     <ChevronDown size={18} />
-                    Voir plus ({projects.length - 3} projets)
+                    {t('projects.viewMore')} ({projects.length - 3} {t('projects.projectsCount')})
                   </>
                 )}
               </button>
@@ -969,20 +1321,22 @@ function PortfolioContent() {
       {/* ══ CONTACT ══ */}
       <section id="contact" style={{ position: 'relative', zIndex: 10, padding: '120px 28px 160px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <SectionTitle tag="parlons ensemble" main="Entrons en " accent="Contact" />
+          <SectionTitle tag={t('contact.tag')} main={t('contact.main')} accent={t('contact.accent')} />
           <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <GlassCard>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '14px' }}>Parlons de votre projet</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: currentTheme.accent, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Send size={17} color={currentTheme.accent} /> {t('contact.sendMessage')}
+                </h3>
                 <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'rgba(255,255,255,0.55)', marginBottom: '24px' }}>
-                  Que ce soit pour une collaboration, un projet freelance ou simplement discuter de technologie, je suis toujours ouvert à la conversation depuis Yaoundé !
+                  {t('contact.description')}
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {[
-                    { Icon: Mail, label: 'Email', value: 'sergiombebi32@gmail.com', color: '#a78bfa' },
-                    { Icon: Phone, label: 'Téléphone', value: '+237 671 706 920', color: '#38bdf8' },
-                    { Icon: MapPin, label: 'Localisation', value: 'Yaoundé, Cameroun', color: '#34d399' },
+                    { Icon: Mail, label: t('contact.email'), value: 'sergiombebi32@gmail.com', color: currentTheme.accent },
+                    { Icon: Phone, label: t('contact.phone'), value: '+237 671 706 920', color: currentTheme.accentSecondary },
+                    { Icon: MapPin, label: t('contact.location'), value: t('contact.city'), color: currentTheme.accentTertiary },
                   ].map(({ Icon, label, value, color }) => (
                     <div key={label} className="contact-row">
                       <div style={{ width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}15`, flexShrink: 0 }}>
@@ -998,7 +1352,7 @@ function PortfolioContent() {
               </GlassCard>
 
               <GlassCard>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '18px' }}>Retrouvez-moi sur</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: currentTheme.accent, marginBottom: '18px' }}>Retrouvez-moi sur</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   {[
                     { Icon: Code, name: 'GitHub', color: '#e2e8f0' },
@@ -1018,48 +1372,53 @@ function PortfolioContent() {
             </div>
 
             {/* Form */}
-            <GlassCard>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Send size={17} color="#a78bfa" /> Envoyer un message
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  {[{ ph: 'Prénom', Icon: () => null }, { ph: 'Nom', Icon: () => null }].map(({ ph }) => (
-                    <div key={ph} style={{ position: 'relative' }}>
-                      <input type="text" placeholder={ph} className="input-field" />
-                    </div>
-                  ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <GlassCard>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: currentTheme.accent, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Send size={17} color={currentTheme.accent} /> {t('contact.sendMessage')}
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    {[{ ph: t('contact.firstName'), Icon: () => null }, { ph: t('contact.lastName'), Icon: () => null }].map(({ ph }) => (
+                      <div key={ph} style={{ position: 'relative' }}>
+                        <input type="text" placeholder={ph} className="input-field" />
+                      </div>
+                    ))}
+                  </div>
+                  <input type="email" placeholder={t('contact.email')} className="input-field" style={{ paddingLeft: '16px' }} />
+                  <input type="text" placeholder={t('contact.subject')} className="input-field" style={{ paddingLeft: '16px' }} />
+                  <textarea placeholder={t('contact.message')} rows={5} className="input-field" style={{ paddingLeft: '16px' }} />
+                  <button onClick={handleSendMessage} style={{ width: '100%', padding: '15px', borderRadius: '14px', fontWeight: 700, fontSize: '14px', fontFamily: "'Syne', sans-serif", background: 'linear-gradient(135deg, #7c3aed, #0ea5e9)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 8px 32px rgba(124,58,237,0.35)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(124,58,237,0.5)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(124,58,237,0.35)'; }}
+                  >
+                    <Send size={15} /> {t('contact.sendButton')}
+                  </button>
+                  <p style={{ textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.25)' }}>{t('contact.responseTime')}</p>
                 </div>
-                <input type="email" placeholder="Email" className="input-field" style={{ paddingLeft: '16px' }} />
-                <input type="text" placeholder="Sujet" className="input-field" style={{ paddingLeft: '16px' }} />
-                <textarea placeholder="Décrivez votre projet..." rows={5} className="input-field" style={{ paddingLeft: '16px' }} />
-                <button onClick={handleSendMessage} style={{ width: '100%', padding: '15px', borderRadius: '14px', fontWeight: 700, fontSize: '14px', fontFamily: "'Syne', sans-serif", background: 'linear-gradient(135deg, #7c3aed, #0ea5e9)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 8px 32px rgba(124,58,237,0.35)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(124,58,237,0.5)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(124,58,237,0.35)'; }}>
-                  <Send size={15} /> Envoyer le message
-                </button>
-                <p style={{ textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.25)' }}>Réponse garantie sous 24h</p>
-              </div>
-            </GlassCard>
+              </GlassCard>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */} 
+{/* Footer */} 
       <footer style={{ position: 'relative', zIndex: 10, padding: '28px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
-          © 2024 MBEBI MBEBI SERGIO QUENTIN — Conçu & développé avec ❤️ à Yaoundé
+          &copy; 2023 Sergio Mbebi. Tous droits réservés.
         </p>
       </footer>
     </div>
   );
 }
 
-// Export par défaut avec ThemeProvider
+// Export par défaut avec les providers
 export default function Portfolio() {
   return (
-    <ThemeProvider>
-      <PortfolioContent />
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <PortfolioContent />
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
