@@ -1,13 +1,130 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MapPin, Briefcase, Target, Globe, Mail, Phone,
   Code, GitBranch, Link, Download, ArrowRight,
   Code2, Layers, Cpu, Wrench, GraduationCap, BookOpen,
   Rocket, BarChart3, Smartphone, ChevronDown, Menu, X,
-  ExternalLink, Star, Zap, Coffee, Send, MessageCircle, Building, TreePine, DollarSign, TrendingUp, Shield
+  ExternalLink, Star, Zap, Coffee, Send, MessageCircle, Building, TreePine, DollarSign, TrendingUp, Shield,
+  Sun, Moon
 } from 'lucide-react';
+
+// ─── Theme Context ───────────────────────────────────────────────────────────
+interface ThemeContextType {
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
+  currentTheme: typeof themes.dark;
+}
+
+const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
+
+function useTheme() {
+  const context = React.useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply theme to document and save to localStorage
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const currentTheme = themes[theme];
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, currentTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+// ─── Theme Colors ───────────────────────────────────────────────────────────
+const themes = {
+  dark: {
+    background: '#07070d',
+    cardBg: 'rgba(255,255,255,0.025)',
+    cardBorder: 'rgba(255,255,255,0.06)',
+    text: '#ffffff',
+    textSecondary: 'rgba(255,255,255,0.6)',
+    textMuted: 'rgba(255,255,255,0.4)',
+    accent: '#a78bfa',
+    accentSecondary: '#38bdf8',
+    accentTertiary: '#34d399',
+    navBg: 'rgba(7,7,13,0.88)',
+    glow1: 'rgba(109,40,217,0.18)',
+    glow2: 'rgba(14,165,233,0.12)',
+    glow3: 'rgba(52,211,153,0.07)',
+  },
+  light: {
+    background: '#ffffff',
+    cardBg: 'rgba(0,0,0,0.02)',
+    cardBorder: 'rgba(0,0,0,0.08)',
+    text: '#1a1a1a',
+    textSecondary: 'rgba(0,0,0,0.7)',
+    textMuted: 'rgba(0,0,0,0.5)',
+    accent: '#7c3aed',
+    accentSecondary: '#0ea5e9',
+    accentTertiary: '#10b981',
+    navBg: 'rgba(255,255,255,0.88)',
+    glow1: 'rgba(124,58,237,0.08)',
+    glow2: 'rgba(14,165,233,0.06)',
+    glow3: 'rgba(52,211,153,0.04)',
+  }
+};
+
+// ─── Theme Toggle Component ───────────────────────────────────────────────────
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  
+  return (
+    <button 
+      onClick={toggleTheme}
+      style={{
+        width: '44px',
+        height: '44px',
+        borderRadius: '12px',
+        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255,255,255,0.05)',
+        color: 'rgba(255,255,255,0.8)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
+      title={`Passer en mode ${theme === 'dark' ? 'clair' : 'sombre'}`}
+    >
+      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+    </button>
+  );
+}
 
 // ─── Typewriter Hook ──────────────────────────────────────────────────────────
 function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 50, pauseMs = 1800) {
@@ -106,7 +223,8 @@ function SectionTitle({ tag, main, accent }: { tag: string; main: string; accent
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export default function Portfolio() {
+function PortfolioContent() {
+  const { theme, toggleTheme, currentTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -444,36 +562,42 @@ export default function Portfolio() {
   `;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#07070d', color: '#fff', fontFamily: "'DM Sans', system-ui, sans-serif", overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: currentTheme.background, color: currentTheme.text, fontFamily: "'DM Sans', system-ui, sans-serif", overflowX: 'hidden' }}>
       <style>{css}</style>
 
       {/* ── Ambient glows ── */}
-      <div style={{ position: 'fixed', top: '-25vh', left: '-15vw', width: '65vw', height: '65vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(109,40,217,0.18) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'fixed', bottom: '-20vh', right: '-10vw', width: '50vw', height: '50vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'fixed', top: '40vh', right: '5vw', width: '30vw', height: '30vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(52,211,153,0.07) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'fixed', top: '-25vh', left: '-15vw', width: '65vw', height: '65vw', borderRadius: '50%', background: `radial-gradient(circle, ${currentTheme.glow1} 0%, transparent 65%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'fixed', bottom: '-20vh', right: '-10vw', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${currentTheme.glow2} 0%, transparent 65%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'fixed', top: '40vh', right: '5vw', width: '30vw', height: '30vw', borderRadius: '50%', background: `radial-gradient(circle, ${currentTheme.glow3} 0%, transparent 65%)`, pointerEvents: 'none', zIndex: 0 }} />
 
       {/* ══ NAV ══ */}
       <nav style={{
         position: 'fixed', top: 0, width: '100%', zIndex: 50,
         padding: isScrolled ? '12px 0' : '22px 0',
-        background: isScrolled ? 'rgba(7,7,13,0.88)' : 'transparent',
+        background: isScrolled ? currentTheme.navBg : 'transparent',
         backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-        borderBottom: isScrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        borderBottom: isScrolled ? `1px solid ${currentTheme.cardBorder}` : 'none',
         transition: 'all 0.4s cubic-bezier(0.4,0,0.2,1)'
       }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', background: 'linear-gradient(135deg, #a78bfa, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SQ.</span>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', background: theme === 'dark' 
+      ? 'linear-gradient(135deg, #ffffff, #f0f0f0)' 
+      : 'linear-gradient(135deg, #1a1a1a, #2a2a2a)', 
+      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SQ.</span>
 
           {/* Desktop */}
           <ul className="nav-desktop" style={{ display: 'flex', gap: '8px', listStyle: 'none', alignItems: 'center' }}>
             {navItems.map(({ id, label }) => (
               <li key={id}>
                 <button onClick={() => scrollTo(id)} className={`nav-item ${activeSection === id ? 'active' : ''}`}
-                  style={{ color: activeSection === id ? '#a78bfa' : 'rgba(255,255,255,0.45)', padding: '6px 10px' }}>
+                  style={{ color: activeSection === id ? currentTheme.accent : 'rgba(255,255,255,0.45)', padding: '6px 10px' }}>
                   {label}
                 </button>
               </li>
             ))}
+            <li>
+              <ThemeToggle />
+            </li>
           </ul>
 
           {/* Mobile toggle */}
@@ -928,5 +1052,14 @@ export default function Portfolio() {
         </p>
       </footer>
     </div>
+  );
+}
+
+// Export par défaut avec ThemeProvider
+export default function Portfolio() {
+  return (
+    <ThemeProvider>
+      <PortfolioContent />
+    </ThemeProvider>
   );
 }
