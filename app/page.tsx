@@ -394,7 +394,6 @@ function LanguageToggle() {
   );
 }
 
-// ─── Theme Colors ───────────────────────────────────────────────────────────
 const themes = {
   dark: {
     background: '#07070d',
@@ -403,13 +402,13 @@ const themes = {
     text: '#ffffff',
     textSecondary: 'rgba(255,255,255,0.6)',
     textMuted: 'rgba(255,255,255,0.4)',
-    accent: '#a78bfa',
-    accentSecondary: '#38bdf8',
-    accentTertiary: '#34d399',
+    accent: '#7c3aed',      // Violet principal
+    accentSecondary: '#6b7280', // Gris secondaire
+    accentTertiary: '#9333ea',  // Violet plus clair pour accents
     navBg: 'rgba(7,7,13,0.88)',
-    glow1: 'rgba(109,40,217,0.18)',
-    glow2: 'rgba(14,165,233,0.12)',
-    glow3: 'rgba(52,211,153,0.07)',
+    glow1: 'rgba(124,58,237,0.15)', // Glow violet
+    glow2: 'rgba(107,114,128,0.08)', // Glow gris
+    glow3: 'rgba(147,51,234,0.05)',  // Glow violet clair
   },
   light: {
     background: '#ffffff',
@@ -418,13 +417,13 @@ const themes = {
     text: '#1a1a1a',
     textSecondary: 'rgba(0,0,0,0.7)',
     textMuted: 'rgba(0,0,0,0.5)',
-    accent: '#7c3aed',
-    accentSecondary: '#0ea5e9',
-    accentTertiary: '#10b981',
+    accent: '#7c3aed',      // Violet principal
+    accentSecondary: '#6b7280', // Gris secondaire
+    accentTertiary: '#9333ea',  // Violet plus clair pour accents
     navBg: 'rgba(255,255,255,0.88)',
-    glow1: 'rgba(124,58,237,0.08)',
-    glow2: 'rgba(14,165,233,0.06)',
-    glow3: 'rgba(52,211,153,0.04)',
+    glow1: 'rgba(124,58,237,0.08)', // Glow violet
+    glow2: 'rgba(107,114,128,0.05)', // Glow gris
+    glow3: 'rgba(147,51,234,0.03)',  // Glow violet clair
   }
 };
 
@@ -675,64 +674,64 @@ function PortfolioContent() {
       title: t('projects.trascolis'),
       desc: t('projects.trascolisDesc'),
       tags: ['Next.js', 'TypeScript', 'Supabase'],
-      accent: '#f59e0b',
-      bg: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.1) 100%)',
+      accent: '#9333ea',
+      bg: 'linear-gradient(135deg, rgba(147,51,234,0.2) 0%, rgba(126,34,206,0.1) 100%)',
     },
     {
       icon: <Building size={22} />,
       title: t('projects.kitaboo'),
       desc: t('projects.kitabooDesc'),
       tags: ['HTML', 'Tailwind CSS', 'Laravel', 'MySQL'],
-      accent: '#ef4444',
-      bg: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)',
+      accent: '#6b7280',
+      bg: 'linear-gradient(135deg, rgba(107,114,128,0.2) 0%, rgba(75,85,99,0.1) 100%)',
     },
     {
       icon: <TreePine size={22} />,
       title: t('projects.sigif'),
       desc: t('projects.sigifDesc'),
       tags: ['Angular', 'Spring Boot', 'PostgreSQL', 'Testing QA'],
-      accent: '#16a34a',
-      bg: 'linear-gradient(135deg, rgba(22,163,74,0.2) 0%, rgba(21,128,61,0.1) 100%)',
+      accent: '#9333ea',
+      bg: 'linear-gradient(135deg, rgba(147,51,234,0.2) 0%, rgba(126,34,206,0.1) 100%)',
     },
     {
       icon: <Building size={22} />,
       title: t('projects.maisonier'),
       desc: t('projects.maisonierDesc'),
       tags: ['Angular', 'Spring Boot', 'PostgreSQL', 'Frontend Dev'],
-      accent: '#8b5cf6',
-      bg: 'linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(124,58,237,0.1) 100%)',
+      accent: '#7c3aed',
+      bg: 'linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(109,40,217,0.1) 100%)',
     },
     {
       icon: <DollarSign size={22} />,
       title: t('projects.axeCapital'),
       desc: t('projects.axeCapitalDesc'),
       tags: ['Vue.js', 'Laravel', 'MySQL', 'Full Stack'],
-      accent: '#10b981',
-      bg: 'linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%)',
+      accent: '#6b7280',
+      bg: 'linear-gradient(135deg, rgba(107,114,128,0.2) 0%, rgba(75,85,99,0.1) 100%)',
     },
     {
       icon: <TrendingUp size={22} />,
       title: t('projects.trackDepense'),
       desc: t('projects.trackDepenseDesc'),
       tags: ['Next.js', 'TypeScript', 'Supabase', 'Analytics'],
-      accent: '#f59e0b',
-      bg: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.1) 100%)',
+      accent: '#9333ea',
+      bg: 'linear-gradient(135deg, rgba(147,51,234,0.2) 0%, rgba(126,34,206,0.1) 100%)',
     },
     {
       icon: <Shield size={22} />,
       title: t('projects.penitentiaire'),
       desc: t('projects.penitentiaireDesc'),
       tags: ['C#', '.NET', 'SQL Server', 'Desktop App'],
-      accent: '#dc2626',
-      bg: 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(185,28,28,0.1) 100%)',
+      accent: '#7c3aed',
+      bg: 'linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(109,40,217,0.1) 100%)',
     },
     {
       icon: <TreePine size={22} />,
       title: t('projects.infosylve'),
       desc: t('projects.infosylveDesc'),
       tags: ['Angular', 'Microservices', 'PostgreSQL', 'Frontend Dev'],
-      accent: '#059669',
-      bg: 'linear-gradient(135deg, rgba(5,150,105,0.2) 0%, rgba(4,120,87,0.1) 100%)',
+      accent: '#6b7280',
+      bg: 'linear-gradient(135deg, rgba(107,114,128,0.2) 0%, rgba(75,85,99,0.1) 100%)',
     },
   ];
 
@@ -752,8 +751,7 @@ function PortfolioContent() {
     .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
     .hero-photo-container { display: flex; justify-content: center; align-items: center; position: relative; }
     .hero-photo-wrapper { position: relative; width: 340px; height: 340px; }
-    .tech-tag { position: absolute; font-size: 12px; padding: 6px 14px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.12); background: rgba(7,7,13,0.92); font-family: 'Syne', sans-serif; font-weight: 600; backdrop-filter: blur(12px); white-space: nowrap; z-index: 5; }
-
+    
     /* Responsive About */
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -763,8 +761,7 @@ function PortfolioContent() {
       .hero-grid .hero-text { order: 2 !important; }
       .hero-grid .hero-photo-container { order: 1 !important; margin-bottom: 20px !important; }
       .hero-photo-wrapper { width: 280px !important; height: 280px !important; }
-      .tech-tag { font-size: 10px !important; padding: 4px 10px !important; }
-      .about-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+            .about-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
       .stats-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
       section#about { padding: 60px 20px !important; }
     }
@@ -775,14 +772,14 @@ function PortfolioContent() {
     }
 
     .nav-item { position: relative; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; transition: color 0.2s; }
-    .nav-item::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; border-radius:99px; background:#a78bfa; transform:scaleX(0); transition:transform 0.25s; }
+    .nav-item::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; border-radius:99px; background:#7c3aed; transform:scaleX(0); transition:transform 0.25s; }
     .nav-item.active::after { transform:scaleX(1); }
     
     .nav-item-mobile { position: relative; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.3s ease; }
     .nav-item-mobile:hover { transform: translateY(-2px); }
 
-    .skill-chip { display:inline-flex; align-items:center; padding:7px 15px; border-radius:99px; font-size:12.5px; font-weight:500; font-family:'DM Sans',sans-serif; border:1px solid rgba(52,211,153,0.25); background:rgba(52,211,153,0.07); color:#34d399; transition:transform 0.2s,background 0.2s; cursor:default; }
-    .skill-chip:hover { transform:scale(1.06); background:rgba(52,211,153,0.14); }
+    .skill-chip { display:inline-flex; align-items:center; padding:7px 15px; border-radius:99px; font-size:12.5px; font-weight:500; font-family:'DM Sans',sans-serif; border:1px solid rgba(124,58,237,0.25); background:rgba(124,58,237,0.07); color:#7c3aed; transition:transform 0.2s,background 0.2s; cursor:default; }
+    .skill-chip:hover { transform:scale(1.06); background:rgba(124,58,237,0.14); }
 
     .proj-card { border-radius:22px; border:1px solid rgba(255,255,255,0.07); overflow:hidden; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s; cursor:pointer; }
     .proj-card:hover { transform:translateY(-6px) scale(1.01); box-shadow:0 24px 60px rgba(0,0,0,0.45); }
@@ -1123,23 +1120,9 @@ function PortfolioContent() {
               <div style={{ position: 'absolute', inset: '12px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.04)' }}>
                 <img src="/photoPortfolio.jpg" alt="Sergio Quentin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              {/* Floating dots */}
-              <div style={{ position: 'absolute', top: '-8px', right: '-8px', width: '22px', height: '22px', borderRadius: '50%', background: 'linear-gradient(135deg,#a78bfa,#7c3aed)', animation: 'float 3s ease-in-out infinite', boxShadow: '0 0 16px rgba(167,139,250,0.6)' }} />
-              <div style={{ position: 'absolute', bottom: '-8px', left: '-8px', width: '15px', height: '15px', borderRadius: '50%', background: 'linear-gradient(135deg,#38bdf8,#0ea5e9)', animation: 'float 3s ease-in-out 1s infinite', boxShadow: '0 0 12px rgba(56,189,248,0.6)' }} />
-            </div>
+                          </div>
 
-            {/* Floating tech tags */}
-            {[
-              { tag: 'React', pos: { top: '10px', left: '-60px' }, delay: '0s', color: '#38bdf8' },
-              { tag: 'Next.js', pos: { top: '80px', right: '-70px' }, delay: '0.8s', color: '#fff' },
-              { tag: 'TypeScript', pos: { bottom: '80px', left: '-75px' }, delay: '1.6s', color: '#818cf8' },
-              { tag: 'Tailwind', pos: { bottom: '10px', right: '-55px' }, delay: '2.4s', color: '#34d399' },
-            ].map(({ tag, pos, delay, color }) => (
-              <div key={tag} className="tech-tag" style={{ ...pos, color, animation: `float 3.5s ease-in-out ${delay} infinite` }}>
-                {tag}
-              </div>
-            ))}
-          </div>
+                      </div>
         </div>
 
         {/* Scroll indicator */}
@@ -1179,15 +1162,15 @@ function PortfolioContent() {
             </div>
 
             <GlassCard>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#c4b5fd', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Star size={18} color="#a78bfa" /> {t('skills.keyInfo')}
+              <h3 style={{ fontSize: '18px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#a78bfa', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Star size={18} color="#7c3aed" /> {t('skills.keyInfo')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 {[
-                  { Icon: MapPin, label: t('skills.location'), value: t('skills.locationValue'), color: '#f87171' },
-                  { Icon: Briefcase, label: t('skills.availability'), value: t('skills.availabilityValue'), color: '#4ade80' },
-                  { Icon: Target, label: t('skills.specialization'), value: t('skills.specializationValue'), color: '#38bdf8' },
-                  { Icon: Globe, label: t('skills.languages'), value: t('skills.languagesValue'), color: '#fb923c' },
+                  { Icon: MapPin, label: t('skills.location'), value: t('skills.locationValue'), color: '#7c3aed' },
+                  { Icon: Briefcase, label: t('skills.availability'), value: t('skills.availabilityValue'), color: '#6b7280' },
+                  { Icon: Target, label: t('skills.specialization'), value: t('skills.specializationValue'), color: '#9333ea' },
+                  { Icon: Globe, label: t('skills.languages'), value: t('skills.languagesValue'), color: '#7c3aed' },
                 ].map(({ Icon, label, value, color }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div style={{ width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}15`, flexShrink: 0 }}>
@@ -1212,30 +1195,30 @@ function PortfolioContent() {
           <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             <GlassCard>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Layers size={20} color="#a78bfa" />
+                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(124,58,237,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Layers size={20} color="#7c3aed" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#a78bfa' }}>{t('skills.frontend')}</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#7c3aed' }}>{t('skills.frontend')}</h3>
               </div>
               {frontendSkills.map(s => <SkillBar key={s.label} {...s} />)}
             </GlassCard>
 
             <GlassCard>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(56,189,248,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Cpu size={20} color="#38bdf8" />
+                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(107,114,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Cpu size={20} color="#6b7280" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#38bdf8' }}>{t('skills.backend')}</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#6b7280' }}>{t('skills.backend')}</h3>
               </div>
               {backendSkills.map(s => <SkillBar key={s.label} {...s} />)}
             </GlassCard>
 
             <GlassCard>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(52,211,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Wrench size={20} color="#34d399" />
+                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(147,51,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Wrench size={20} color="#9333ea" />
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#34d399' }}>{t('skills.tools')}</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, fontFamily: "'Syne', sans-serif", color: '#9333ea' }}>{t('skills.tools')}</h3>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {tools.map(t => <span key={t} className="skill-chip">{t}</span>)}
