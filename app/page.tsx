@@ -777,6 +777,9 @@ function PortfolioContent() {
     .nav-item { position: relative; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; transition: color 0.2s; }
     .nav-item::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; border-radius:99px; background:#a78bfa; transform:scaleX(0); transition:transform 0.25s; }
     .nav-item.active::after { transform:scaleX(1); }
+    
+    .nav-item-mobile { position: relative; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.3s ease; }
+    .nav-item-mobile:hover { transform: translateY(-2px); }
 
     .skill-chip { display:inline-flex; align-items:center; padding:7px 15px; border-radius:99px; font-size:12.5px; font-weight:500; font-family:'DM Sans',sans-serif; border:1px solid rgba(52,211,153,0.25); background:rgba(52,211,153,0.07); color:#34d399; transition:transform 0.2s,background 0.2s; cursor:default; }
     .skill-chip:hover { transform:scale(1.06); background:rgba(52,211,153,0.14); }
@@ -890,10 +893,25 @@ function PortfolioContent() {
       .social-btn { grid-template-columns: 1fr !important; }
     }
 
+    /* Animation menu mobile */
+    @keyframes slideInMobile { 
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .nav-item-mobile { animation: slideInMobile 0.4s ease-out; }
+    .nav-item-mobile:nth-child(1) { animation-delay: 0.1s; }
+    .nav-item-mobile:nth-child(2) { animation-delay: 0.15s; }
+    .nav-item-mobile:nth-child(3) { animation-delay: 0.2s; }
+    .nav-item-mobile:nth-child(4) { animation-delay: 0.25s; }
+    .nav-item-mobile:nth-child(5) { animation-delay: 0.3s; }
+    .nav-item-mobile:nth-child(6) { animation-delay: 0.35s; }
+
     /* Optimisations pour les appareils tactiles */
     @media (hover: none) and (pointer: coarse) {
       .nav-item:hover::after { transform: scaleX(0) !important; }
       .nav-item:active::after { transform: scaleX(1) !important; }
+      .nav-item-mobile:hover { transform: none !important; }
+      .nav-item-mobile:active { transform: scale(0.95) !important; }
       .proj-card:hover { transform: none !important; }
       .proj-card:active { transform: scale(0.98) !important; }
       .edu-card:hover { transform: none !important; }
@@ -945,11 +963,6 @@ function PortfolioContent() {
             <li>
               <LanguageToggle />
             </li>
-            <li>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="nav-mobile" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', display: 'none', padding: '8px' }}>
-                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
-            </li>
           </ul>
 
           {/* Mobile toggle */}
@@ -963,27 +976,70 @@ function PortfolioContent() {
       {mobileMenuOpen && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          background: 'rgba(7,7,13,0.98)', backdropFilter: 'blur(20px)', 
+          background: theme === 'dark' ? 'rgba(7,7,13,0.98)' : 'rgba(255,255,255,0.98)', 
+          backdropFilter: 'blur(20px)', 
           zIndex: 45, display: 'flex', flexDirection: 'column', 
-          alignItems: 'center', justifyContent: 'center', gap: '20px'
+          alignItems: 'center', justifyContent: 'center', gap: '16px'
         }}>
           <button onClick={() => setMobileMenuOpen(false)} style={{ 
             position: 'absolute', top: '20px', right: '20px', 
             background: 'none', border: 'none', cursor: 'pointer', 
-            color: 'rgba(255,255,255,0.7)', padding: '8px' 
+            color: theme === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)', padding: '8px' 
           }}>
             <X size={24} />
           </button>
-          {navItems.map(({ id, label }) => (
-            <button key={id} onClick={() => scrollTo(id)} style={{ 
-              fontSize: '18px', fontWeight: 500, color: 'rgba(255,255,255,0.8)', 
-              background: 'none', border: 'none', cursor: 'pointer', 
-              fontFamily: "'DM Sans', sans-serif", padding: '12px 24px',
-              borderRadius: '12px', transition: 'background 0.2s'
+          
+          {/* Navigation items */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+            {navItems.map(({ id, label }) => (
+              <button 
+                key={id} 
+                onClick={() => scrollTo(id)} 
+                className={`nav-item-mobile ${activeSection === id ? 'active' : ''}`}
+                style={{ 
+                  fontSize: '20px', fontWeight: 600, 
+                  color: activeSection === id 
+                    ? (theme === 'dark' ? '#a78bfa' : '#7c3aed')
+                    : (theme === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)'), 
+                  background: activeSection === id 
+                    ? (theme === 'dark' ? 'rgba(167,139,250,0.15)' : 'rgba(124,58,237,0.15)')
+                    : 'none', 
+                  border: activeSection === id 
+                    ? `1px solid ${theme === 'dark' ? 'rgba(167,139,250,0.3)' : 'rgba(124,58,237,0.3)'}`
+                    : 'none',
+                  cursor: 'pointer', 
+                  fontFamily: "'DM Sans', sans-serif", 
+                  padding: '16px 32px',
+                  borderRadius: '16px', 
+                  transition: 'all 0.3s ease',
+                  minWidth: '200px',
+                  textAlign: 'center'
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          
+          {/* Theme and Language toggles */}
+          <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
+            <div style={{ 
+              padding: '12px', 
+              borderRadius: '12px', 
+              background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`
             }}>
-              {label}
-            </button>
-          ))}
+              <ThemeToggle />
+            </div>
+            <div style={{ 
+              padding: '12px', 
+              borderRadius: '12px', 
+              background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`
+            }}>
+              <LanguageToggle />
+            </div>
+          </div>
         </div>
       )}
 
