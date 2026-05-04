@@ -567,6 +567,7 @@ function PortfolioContent() {
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAllProjects, setShowAllProjects] = useState(false);
+  const [showCVModal, setShowCVModal] = useState(false);
   const typedName = useTypewriter(
     language === 'fr' 
       ? ['SERGIO QUENTIN', 'DÉVELOPPEUR FRONTEND', 'TESTEUR', 'MBEBI MBEBI']
@@ -1079,11 +1080,11 @@ function PortfolioContent() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(124,58,237,0.35)'; }}>
                 <Rocket size={15} /> {t('hero.viewProjects')}
               </button>
-              <a href="/cv-sergio-quentin.pdf" download style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.04)', textDecoration: 'none', transition: 'background 0.2s, transform 0.2s' }}
+              <button onClick={() => setShowCVModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.04)', textDecoration: 'none', transition: 'background 0.2s, transform 0.2s', cursor: 'pointer' }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.transform = 'scale(1.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'scale(1)'; }}>
                 <Download size={14} /> {t('hero.downloadCV')}
-              </a>
+              </button>
               <button onClick={() => scrollTo('contact')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '13px 24px', borderRadius: '99px', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Syne', sans-serif", border: `1px solid ${currentTheme.accent}66`, color: currentTheme.accent, background: 'transparent', cursor: 'pointer', transition: 'background 0.2s, transform 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = `${currentTheme.accent}15`; e.currentTarget.style.transform = 'scale(1.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}>
@@ -1447,6 +1448,107 @@ function PortfolioContent() {
           &copy; 2023 Sergio Mbebi. Tous droits réservés.
         </p>
       </footer>
+
+      {/* CV Download Modal */}
+      {showCVModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
+          zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            background: theme === 'dark' ? '#1a1a2e' : '#ffffff',
+            borderRadius: '20px', padding: '32px', maxWidth: '500px', width: '100%',
+            border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            animation: 'fadeUp 0.3s ease-out'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{
+                width: '48px', height: '48px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #7c3aed, #9333ea)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <Download size={24} color="#ffffff" />
+              </div>
+              <div>
+                <h3 style={{ 
+                  fontSize: '20px', fontWeight: 700, 
+                  color: theme === 'dark' ? '#ffffff' : '#1a1a1a',
+                  fontFamily: "'Syne', sans-serif", margin: 0 
+                }}>
+                  {t('hero.downloadCV')}
+                </h3>
+                <p style={{ 
+                  fontSize: '14px', color: theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
+                  margin: 0, fontFamily: "'DM Sans', sans-serif" 
+                }}>
+                  Confirmation requise
+                </p>
+              </div>
+            </div>
+            
+            <p style={{ 
+              fontSize: '15px', lineHeight: 1.6, 
+              color: theme === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)',
+              marginBottom: '28px', fontFamily: "'DM Sans', sans-serif"
+            }}>
+              Vous êtes sur le point de télécharger le CV de l'Ingénieur des Travaux Informatique <strong>MR MBEBI MBEBI SERGIO QUENTIN</strong>. 
+              Voulez-vous continuer ?
+            </p>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setShowCVModal(false)}
+                style={{
+                  padding: '12px 24px', borderRadius: '12px',
+                  border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`,
+                  background: 'transparent',
+                  color: theme === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)',
+                  fontSize: '14px', fontWeight: 600, fontFamily: "'DM Sans', sans-serif",
+                  cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                Annuler
+              </button>
+              
+              <a 
+                href="/MBEBI_MBEBI_SERGIO_QUENTIN__2026-05-03.pdf" 
+                download
+                onClick={() => setShowCVModal(false)}
+                style={{
+                  padding: '12px 24px', borderRadius: '12px',
+                  border: 'none', background: 'linear-gradient(135deg, #7c3aed, #9333ea)',
+                  color: '#ffffff', fontSize: '14px', fontWeight: 600,
+                  fontFamily: "'DM Sans', sans-serif", cursor: 'pointer',
+                  textDecoration: 'none', display: 'inline-flex',
+                  alignItems: 'center', gap: '8px',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 4px 20px rgba(124,58,237,0.3)'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(124,58,237,0.5)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.3)';
+                }}
+              >
+                <Download size={16} />
+                Confirmer le téléchargement
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
